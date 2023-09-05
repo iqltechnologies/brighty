@@ -1,0 +1,12 @@
+{
+    "name": "abdullah/brighty-core-plugin",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Abdullah\\BrightyCorePlugin\\": "src/"
+        }
+    },
+    "require": {
+        "tgmpa/tgm-plugin-activation" : "2.6.1"
+    }
+}

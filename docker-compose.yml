@@ -1,0 +1,70 @@
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+#                            B R I G H T Y                                 #
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+version: "3"
+
+services:
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+#                           W O R D P R E S S                              #
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+    brighty_dev:
+
+      image: docker.io/wordpress
+      container_name: 'brighty_dev'
+      ports:
+        - '9090:80'
+      environment:
+        - WORDPRESS_DB_HOST=brighty_dev_mysql
+        - WORDPRESS_DB_PORT=3307
+        - WORDPRESS_DB_NAME=brighty_dev
+        - WORDPRESS_DB_USER=root
+        - WORDPRESS_DB_PASSWORD=brighty_devP
+        - WORDPRESS_TABLE_PREFIX=wp
+        - WORDPRESS_DEBUG=1
+      volumes:
+        - './wp:/var/www/html'
+        - './brighty-core-plugin/:/var/www/html/wp-content/plugins/brighty-core-plugin/'
+        - './brighty-core-theme/:/var/www/html/wp-content/themes/brighty-core-theme/'
+      depends_on:
+        - brighty_dev_mysql
+
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+#                               M Y S Q L                                  #
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#               
+    brighty_dev_mysql:
+        image: mariadb:10.5.5
+        container_name: 'brighty_dev_mysql'
+        ports:
+          - 3307:3307
+        volumes:
+          - ./database/mysql:/var/lib/mysql
+          - ./database/logs/mysql:/var/log/mysql
+        environment:
+          MYSQL_DATABASE: brighty_dev
+          MYSQL_USER: brighty_dev_user
+          MYSQL_PASSWORD: brighty_devP
+          MYSQL_ROOT_PASSWORD: brighty_devP
+
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#
+#                         P H P M Y A D M I N                              #
+#--------------------------------------------------------------------------#
+#--------------------------------------------------------------------------#             
+    brighty_dev_phpmyadmin:
+        image: phpmyadmin/phpmyadmin:5.0.2
+        container_name: 'brighty_dev_phpmyadmin'
+        links:
+          - brighty_dev_mysql
+        environment:
+          PMA_HOST: brighty_dev_mysql
+          PMA_PORT: 3307
+        ports:
+          - 82:83
+        volumes:
+          - ./database/sessions:/sessions
